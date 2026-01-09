@@ -1,0 +1,22 @@
+import express from "express";
+import cors from "cors";
+import uploadRoutes from "./Routes/uploadRoutes.js";
+import chatRoutes from "./Routes/chatRoutes.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+app.use(express.json());
+
+app.use("/upload", uploadRoutes);
+app.use("/chat", chatRoutes);
+
+app.listen(5000, () => {
+  console.log("Backend running on http://localhost:5000");
+});
