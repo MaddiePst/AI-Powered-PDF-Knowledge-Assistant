@@ -5,17 +5,10 @@ import { VectorStoreIndex, Document } from "llamaindex";
 import { ChromaVectorStore } from "@llamaindex/chroma";
 import { Settings } from "llamaindex";
 import { OpenAIEmbedding } from "@llamaindex/openai";
-import { HuggingFaceEmbedding } from "@llamaindex/huggingface";
 
-//  REQUIRED CONFIG
-Settings.embedModel = new HuggingFaceEmbedding({
-  modelType: "sentence-transformers",
-  model: "all-MiniLM-L6-v2",
+Settings.embedModel = new OpenAIEmbedding({
+  model: "text-embedding-3-small",
 });
-
-// Settings.embedModel = new OpenAIEmbedding({
-//   model: "text-embedding-3-small",
-// });
 
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse"); // ✅ NOW A FUNCTION
