@@ -1,53 +1,34 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { RunnableSequence } from "@langchain/core/runnables";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { getIndex } from "../Controllers/indexServiceControllers.js";
+import { getIndex } from "./indexServiceControllers.js";
 
-export async function askQuestion(question) {
-  // Retrieves current vector index
-  const index = getIndex();
+export async function chatWithPDF(req, res) {
+  try {
+    const { question } = req.body;
 
-  if (!index) {
-    throw new Error("No index available");
+    if (!question) {
+      return res.status(400).json({ error: "Question is required" });
+    }
+
+    const index = getIndex();
+
+    if (!index) {
+      return res.status(400).json({
+        error: "No PDF indexed yet. Upload a PDF first.",
+      });
+    }
+
+    const queryEngine = index.asQueryEngine({
+      similarityTopK: 3,
+    });
+
+    const response = await queryEngine.query({
+      query: question,
+    });
+
+    res.json({
+      answer: response.response,
+    });
+  } catch (err) {
+    console.error("❌ Chat error:", err);
+    res.status(500).json({ error: err.message });
   }
-
-  // Convert LlamaIndex index → LangChain retriever
-  // Retriever => Takes a question. Finds relevant vector chunks.
-  const retriever = index.asRetriever();
-
-  // Initializes OpenAI LLM.(temperature: 0: More factual, less creative, Ideal for document QA
-  const llm = new ChatOpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    model: "gpt-3.5-turbo",
-    temperature: 0,
-  });
-
-  // Prompt template (inline for simplicity)
-  const prompt = (docs, question) => `
-You are an AI assistant answering questions based on the provided context.
-
-Context:
-${docs.map((d) => d.pageContent).join("\n\n")}
-
-Question:
-${question}
-
-Answer:
-`;
-
-  // Chain that injects retrieved docs into the prompt
-  // LangChain: Question → retriever, Top chunks → prompt, Prompt → LLM, Answer returned
-  const chain = RunnableSequence.from([
-    async (input) => {
-      const docs = await retriever.invoke(input);
-      return prompt(docs, input);
-    },
-    llm,
-    new StringOutputParser(),
-  ]);
-
-  // Executes the chain, query is required input key
-  const answer = await chain.invoke(question);
-  // Extracts human-readable answer
-  return answer;
 }

@@ -1,0 +1,16 @@
+# Node
+node_modules/
+
+# Environment variables
+.env
+
+# Uploaded files
+uploads/
+
+# Chroma vector database
+vectorstore/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,24 +1,20 @@
 import fs from "fs";
 import { createRequire } from "module";
-
-import { VectorStoreIndex, Document } from "llamaindex";
+import { VectorStoreIndex, Document, Settings } from "llamaindex";
 import { ChromaVectorStore } from "@llamaindex/chroma";
-import { Settings } from "llamaindex";
-import { OpenAIEmbedding } from "@llamaindex/openai";
-import { HuggingFaceEmbedding } from "@llamaindex/huggingface";
+import { OpenAIEmbedding, OpenAI } from "@llamaindex/openai";
 
-//  REQUIRED CONFIG
-Settings.embedModel = new HuggingFaceEmbedding({
-  modelType: "sentence-transformers",
-  model: "all-MiniLM-L6-v2",
+Settings.embedModel = new OpenAIEmbedding({
+  model: "text-embedding-3-small",
 });
 
-// Settings.embedModel = new OpenAIEmbedding({
-//   model: "text-embedding-3-small",
-// });
+Settings.llm = new OpenAI({
+  model: "gpt-4o-mini",
+  temperature: 0.2,
+});
 
 const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse"); // ✅ NOW A FUNCTION
+const pdfParse = require("pdf-parse");
 
 let index;
 
@@ -60,4 +56,14 @@ export async function ingestPDF(filePath) {
 
 export function getIndex() {
   return index;
+}
+
+export async function loadIndexIfExists() {
+  const vectorStore = new ChromaVectorStore({
+    collectionName: "pdf-knowledge",
+    persistDir: "./vectorstore",
+  });
+
+  index = await VectorStoreIndex.fromVectorStore(vectorStore);
+  console.log("✅ Index reloaded from disk");
 }

@@ -7,23 +7,35 @@ const router = express.Router();
 //Uploaded files are stored in uploads/ Files get temporary random names
 const upload = multer({ dest: "upload/" });
 
-router.post("/", upload.single("pdf"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No PDF uploaded" });
-  }
+router.post("/", (req, res) => {
+  upload.single("pdf")(req, res, async (err) => {
+    if (err) {
+      console.error(" Multer error:", err);
+      return res.status(400).json({ error: err.message });
+    }
 
-  const filePath = req.file.path;
+    if (!req.file) {
+      return res.status(400).json({ error: "No PDF uploaded" });
+    }
 
-  // ✅ Respond IMMEDIATELY
-  res.status(202).json({
-    message: "PDF uploaded successfully. Indexing started in background.",
-  });
+    console.log(" File received:", req.file.originalname);
 
-  // ✅ Fully detach indexing
-  setImmediate(() => {
-    ingestPDF(filePath)
-      .then(() => console.log("✅ Indexing completed"))
-      .catch((err) => console.error("❌ Indexing failed:", err));
+    const filePath = req.file.path;
+
+    // respond immediately
+    res.status(202).json({
+      message: "PDF uploaded successfully. Indexing started in background.",
+    });
+
+    // run indexing after response
+    setImmediate(async () => {
+      try {
+        await ingestPDF(filePath);
+        console.log(" Indexing completed");
+      } catch (err) {
+        console.error("❌Indexing failed:", err);
+      }
+    });
   });
 });
 
