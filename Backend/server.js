@@ -24,20 +24,6 @@ app.use(express.json());
 app.use("/upload", uploadRoutes);
 app.use("/chat", chatRoutes);
 
-const PORT = process.env.PORT || 5000;
-
-async function startServer() {
-  try {
-    await loadIndexIfExists();
-    console.log("✅ Index loaded (or empty)");
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Backend running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error("❌ Failed to start server:", err);
-    process.exit(1);
-  }
-}
-
-startServer();
+app.listen(5000, () => {
+  console.log("Backend running on http://localhost:5000");
+});

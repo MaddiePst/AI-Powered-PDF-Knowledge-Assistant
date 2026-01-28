@@ -1,3 +1,4 @@
+
 import fs from "fs";
 import { createRequire } from "module";
 import { VectorStoreIndex, Document, Settings } from "llamaindex";
@@ -66,4 +67,4 @@ export async function loadIndexIfExists() {
 
   index = await VectorStoreIndex.fromVectorStore(vectorStore);
   console.log("✅ Index reloaded from disk");
-}
+};
