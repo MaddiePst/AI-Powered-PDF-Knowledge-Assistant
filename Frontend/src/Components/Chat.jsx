@@ -17,7 +17,7 @@ export default function Chat() {
     setMessages((prev) => [...prev, userMsg]);
     setQuestion("");
 
-    const res = await fetch(`${API_URL}/chat`, {
+    const res = await fetch(`${API_URL}chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),

@@ -14,7 +14,7 @@ export default function UploadPDF() {
     setStatus("Uploading...");
 
     try {
-      const res = await fetch(`${API_URL}/upload`, {
+      const res = await fetch(`${API_URL}upload`, {
         method: "POST",
         body: formData,
       });
