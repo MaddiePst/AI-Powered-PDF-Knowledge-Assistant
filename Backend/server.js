@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 
-/*  CORS  */
+/* ✅ CORS — global, handles preflight automatically */
 app.use(
   cors({
     origin: [
@@ -21,18 +21,15 @@ app.use(
   })
 );
 
-
-app.options("*", cors());
-
-/* Body parsing */
+/* ✅ Body parsing */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* Routes */
+/* ✅ Routes */
 app.use("/upload", uploadRoutes);
 app.use("/chat", chatRoutes);
 
-/* Render-required PORT */
+/* ✅ Port for Render */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
