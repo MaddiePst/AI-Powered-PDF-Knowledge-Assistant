@@ -1,10 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import API_URL from "../config/api";
 
-fetch(`/api/users`);
-
-
-
 export default function Chat() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
@@ -21,7 +17,6 @@ export default function Chat() {
     setMessages((prev) => [...prev, userMsg]);
     setQuestion("");
 
-    // "http://localhost:5000/chat"
     const res = await fetch(`${API_URL}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
