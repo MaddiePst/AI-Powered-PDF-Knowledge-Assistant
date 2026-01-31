@@ -49,7 +49,6 @@ Users should be able to:
 
 Solution URL: ![GitHub Repository](https://github.com/MaddiePst/AI-Powered-PDF-Knowledge-Assistant)
 
-Live Site URL: ![Live Demo](https://ai-powered-pdf-knowledge-assistant.vercel.app)
 
 ## My process
 ### Built with
