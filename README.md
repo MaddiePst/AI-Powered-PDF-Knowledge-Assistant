@@ -43,13 +43,13 @@ Users should be able to:
 ## Screenshot
 
 📸 Screenshot of the application  
-![AI-Powered PDF Knowledge Assistant Screenshot](./screenshot.png)
+![AI-Powered PDF Knowledge Assistant Screenshot](./AI-Powered-PDF-Knowledge-Assistant.png)
 
 ## Links
 
-Solution URL: GitHub Repository
+Solution URL: ![GitHub Repository](https://github.com/MaddiePst/AI-Powered-PDF-Knowledge-Assistant)
 
-Live Site URL: Live Demo
+Live Site URL: ![Live Demo](https://ai-powered-pdf-knowledge-assistant.vercel.app/)
 
 ## My process
 ### Built with
@@ -96,21 +96,16 @@ Deployed the application using Vercel and handled environment variables securely
    - React (with Hooks)
    - JavaScript (ES6+)
    - HTML5 / CSS3
+   - LangChain & LangIndex
    - AI / Large Language Models
    - PDF Parsing Libraries
    - Node.js
    - Git & GitHub
    - Vercel
-   - Useful resources
-   - React Documentation
-   - MDN Web Docs
-   - OpenAI Documentation
-   - Vercel Documentation
 
-## Author
+### Author
 
-Website: Madalina Pastiu – Portfolio
+- Website: [Madalina Pastiu Portfolio](https://maddiepst.github.io/)
+- LinkedIn: [Madalina Pastiu](www.linkedin.com/in/madalina-p-52a01396)
+- GitHub: [@maddiepst](https://github.com/MaddiePst)
 
-LinkedIn: Madalina Pastiu
-
-GitHub: @maddiepst
