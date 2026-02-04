@@ -53,7 +53,7 @@ Solution URL: ![GitHub Repository](https://github.com/MaddiePst/AI-Powered-PDF-K
 ## My process
 ### Built with
    - Semantic HTML5 markup
-   - Modern CSS styling
+   - Tailwind CSS
    - React (with Hooks)
    - JavaScript (ES6+)
    - AI / LLM integration
