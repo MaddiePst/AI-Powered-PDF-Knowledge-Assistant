@@ -100,4 +100,36 @@ body,
   .glass {
     @apply backdrop-blur-md rounded-lg p-4 border border-white/10;
   }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.25s ease-out;
+  }
+
+  .animate-progress-indeterminate {
+    animation: progress-indeterminate 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-indeterminate {
+  /* `left` is a percentage of the CONTAINER's width, unlike transform
+     (which is relative to the element's own box) — that mismatch is why
+     the bar used to stall about a third of the way across instead of
+     sweeping fully from edge to edge. */
+  0% {
+    left: -40%;
+  }
+  100% {
+    left: 100%;
+  }
 }
