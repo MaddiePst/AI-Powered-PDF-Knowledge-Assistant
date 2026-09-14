@@ -65,6 +65,28 @@ export function getStatus() {
   return status;
 }
 
+// Loads the persisted store, but self-heals if it can't: a process that
+// gets killed mid-write (e.g. a host restart, or two uploads overlapping
+// and racing to write the same files) can leave a corrupted/partial JSON
+// file behind that would otherwise permanently fail every future upload
+// with "Failed to load data from path: ...". Since this store only ever
+// holds a rebuildable cache of already-uploaded PDFs, wiping it and
+// starting fresh is always a safe recovery.
+async function getStorageContext() {
+  try {
+    return await storageContextFromDefaults({ persistDir: PERSIST_DIR });
+  } catch (err) {
+    log(
+      "⚠️ Vector store at",
+      PERSIST_DIR,
+      "failed to load — resetting it and starting fresh:",
+      err?.message || String(err)
+    );
+    fs.rmSync(PERSIST_DIR, { recursive: true, force: true });
+    return await storageContextFromDefaults({ persistDir: PERSIST_DIR });
+  }
+}
+
 async function runIngestPipeline(filePath) {
   const dataBuffer = fs.readFileSync(filePath);
   log("  · PDF buffer loaded", `(${dataBuffer.length} bytes)`);
@@ -87,9 +109,7 @@ async function runIngestPipeline(filePath) {
   // Local, file-based vector store — no external database server
   // required. Everything persists as JSON under PERSIST_DIR and is
   // reloaded automatically the next time the server starts.
-  const storageContext = await storageContextFromDefaults({
-    persistDir: PERSIST_DIR,
-  });
+  const storageContext = await getStorageContext();
   log("  · Storage context ready");
 
   log("  · Starting embedding call to OpenAI...");
@@ -104,6 +124,17 @@ async function runIngestPipeline(filePath) {
 }
 
 export async function ingestPDF(filePath, fileName) {
+  // Guard against two ingest pipelines running at once (e.g. a retried
+  // upload while the previous one is still in flight). Both would call
+  // getStorageContext() independently and race to write the same JSON
+  // files, which is exactly the kind of corruption getStorageContext()
+  // above has to recover from — better to just not let it happen.
+  if (status.state === "processing") {
+    throw new Error(
+      "Another PDF is already being indexed — wait for it to finish before uploading another."
+    );
+  }
+
   const startedAt = Date.now();
   status = {
     state: "processing",
@@ -172,9 +203,7 @@ export async function loadIndexIfExists() {
       return;
     }
 
-    const storageContext = await storageContextFromDefaults({
-      persistDir: PERSIST_DIR,
-    });
+    const storageContext = await getStorageContext();
 
     index = await VectorStoreIndex.init({ storageContext });
     status = {

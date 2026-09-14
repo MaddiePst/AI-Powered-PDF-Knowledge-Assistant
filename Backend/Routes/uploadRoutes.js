@@ -57,6 +57,17 @@ router.post("/", upload.single("pdf"), async (req, res) => {
     const filePath = req.file.path;
     const fileName = req.file.originalname;
 
+    // Reject a second upload while one is still indexing instead of
+    // letting two pipelines race to write the same vector store files —
+    // that race is what was corrupting the store on Render.
+    if (getStatus().state === "processing") {
+      log("⚠️ Rejecting upload — indexing already in progress");
+      fs.unlink(filePath, () => {});
+      return res.status(409).json({
+        error: "Another PDF is already being indexed. Please wait for it to finish.",
+      });
+    }
+
     /* Respond immediately */
     res.status(202).json({
       message: "PDF uploaded successfully. Indexing started in background.",
